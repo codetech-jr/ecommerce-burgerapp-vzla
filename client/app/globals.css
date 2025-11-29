@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* --- 1. DEFINICIÓN DEL TEMA (Variables de Diseño) --- */
+@theme {
+  /* COLORES PERSONALIZADOS */
+  /* Al declarar --color-primary, Tailwind crea automáticamente: bg-primary, text-primary, border-primary, etc. */
+  
+  --color-primary: #EA580C;       /* Orange-600 (Tu color de marca) */
+  --color-primary-light: #FB923C; /* Orange-400 */
+  --color-primary-dark: #C2410C;  /* Orange-700 */
+  
+  --color-surface: #F8FAFC;       /* Slate-50 (Tu color de fondo suave) */
+
+  /* FUENTES TIPOGRÁFICAS */
+  /* Conectamos las variables CSS que definimos en layout.tsx */
+  /* Crea clases: font-heading y font-body */
+  
+  --font-heading: var(--font-heading); 
+  --font-body: var(--font-body);
+}
+
+/* --- 2. UTILIDADES PERSONALIZADAS (Sintaxis v4) --- */
+/* Usamos @utility para crear clases propias de forma limpia */
+
+@utility no-scrollbar {
+  /* Oculta scrollbar en Chrome/Safari/Webkit */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Oculta scrollbar en Firefox/Edge */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* --- 3. ESTILOS BASE HTML --- */
+body {
+  background-color: var(--color-surface);
+  color: #0f172a; /* Slate-900 por defecto para el texto */
+  font-family: var(--font-body); /* Fuente por defecto 'Inter' */
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}

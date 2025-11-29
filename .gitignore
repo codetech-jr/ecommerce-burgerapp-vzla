@@ -1,0 +1,7 @@
+**/node_modules
+**/dist
+**/.next
+**/.rsc
+npm-debug.log
+.env
+**/prisma/prisma-client-js

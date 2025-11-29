@@ -1,0 +1,50 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal
+  image       String?
+  slug        String   @unique
+  prepTime    String?
+  ingredients String?
+  
+  category    String   @default("Otros")
+
+  createdAt   DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Order {
+  id            Int      @id @default(autoincrement())
+  
+  // 1. DATOS DEL CLIENTE
+  customerName  String
+  phone         String
+  address       String   @default("Retiro en local") // Opcional si no hay delivery
+  
+  // 2. DETALLES DE PAGO
+  total         Decimal
+  paymentMethod String   // "pago_movil", "binance", "zelle"
+  paymentRef    String?   
+  
+  // 3. EL PEDIDO
+  // Guardamos el carrito completo aquí (Array de objetos)
+  // Prisma lo guardará como texto JSON
+  items         Json     
+  
+  // 4. ESTADO DE LA ORDEN
+  status        String   @default("PENDIENTE") // PENDIENTE, PAGADO, ENVIADO, CANCELADO
+  
+  createdAt     DateTime @default(now())
+}
