@@ -5,20 +5,15 @@ import AddToCartButton from "@/components/AddToCartButton";
 import FloatingCart from "@/components/FloatingCart";
 import CartSidebar from "@/components/CartSidebar";
 import ShareButton from "@/components/ShareButton";
-// Importa el tipo adecuado (ajusta la ruta si es necesario)
 import { Product } from "@/type"; 
 import Link from "next/link";
-// IMPORTE CRUCIAL: La URL de producción
 import { API_URL } from "@/lib/config"; 
 
-// Para que Vercel no cachee la página vacía y busque el producto real
+// Evita caché para datos siempre frescos
 export const dynamic = "force-dynamic"; 
 
-// API Fetcher usando la URL de Railway (API_URL)
 async function getProduct(slug: string): Promise<Product | null> {
   try {
-    // ⚠️ CAMBIO IMPORTANTE: Usar API_URL
-    // El backend que hicimos busca por ID o SLUG automáticamente
     const res = await fetch(`${API_URL}/products/${slug}`, { 
       cache: 'no-store' 
     });
@@ -56,9 +51,19 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  // ⚠️ LÓGICA DE INGREDIENTES CORREGIDA:
-  // Si product.ingredients ya es un array, lo usamos directamente.
-  const safeIngredients = product.ingredients || [];
+  // --- 🔥 SOLUCIÓN DEFINITIVA AL ERROR DE .MAP 🔥 ---
+  // Normalizamos ingredientes: no importa si llegan como string o array,
+  // aquí los convertimos a array de strings para que el .map no falle nunca.
+  let safeIngredients: string[] = [];
+
+  if (Array.isArray(product.ingredients)) {
+    // Caso ideal: ya es un array
+    safeIngredients = product.ingredients;
+  } else if (typeof product.ingredients === 'string') {
+    // Caso String: viene separado por comas "Carne, Queso, Pan"
+    safeIngredients = (product.ingredients as string).split(',').map(i => i.trim());
+  }
+  // Si es null o undefined, se queda en [] (array vacío)
 
   return (
     <div className="min-h-screen bg-slate-50 pb-32 md:pb-24">
@@ -72,7 +77,6 @@ export default async function ProductPage({ params }: Props) {
           <ArrowLeft size={20} strokeWidth={2.5} />
         </Link>
         <div className="pointer-events-auto">
-           {/* Usamos nombre como prop opcional, o null */}
            <ShareButton productName={product.name} />
         </div>
       </div>
@@ -93,7 +97,6 @@ export default async function ProductPage({ params }: Props) {
         )}
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/10 to-transparent"></div>
       </div>
-
 
       {/* TARJETA DE CONTENIDO */}
       <div className="relative -mt-10 bg-white rounded-t-[2.5rem] px-6 pt-10 pb-6 shadow-[0_-10px_60px_-15px_rgba(0,0,0,0.3)] max-w-3xl mx-auto min-h-[60vh]">
@@ -138,14 +141,12 @@ export default async function ProductPage({ params }: Props) {
                🥩 Ingredientes:
             </h3>
             <div className="flex flex-wrap gap-2">
-                {/* Aquí usamos el map sobre el array seguro */}
                 {safeIngredients.map((ing, index) => (
                     <span 
                       key={index} 
                       className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 text-sm font-bold shadow-sm flex items-center gap-2 hover:border-orange-200 hover:text-orange-600 transition-colors cursor-default"
                     >
                       <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
-                      {/* .trim() quita los espacios extra si escribiste "Carne, Queso" */}
                       {ing.trim()}
                     </span>
                 ))}
@@ -155,25 +156,23 @@ export default async function ProductPage({ params }: Props) {
 
       </div>
 
-        {/* STICKY FOOTER (ISLAND UI) */}
-        <div className="fixed bottom-4 left-4 right-4 z-30 md:bottom-8 pointer-events-none">
+      {/* STICKY FOOTER */}
+      <div className="fixed bottom-4 left-4 right-4 z-30 md:bottom-8 pointer-events-none">
           <div className="max-w-3xl mx-auto bg-slate-900 text-white p-2 pr-2 rounded-2xl shadow-2xl shadow-slate-900/40 flex items-center justify-between border border-slate-800 pointer-events-auto">
               
             <div className="pl-6 flex flex-col">
               <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Total</span>
-              {/* Aseguramos Number() por si el precio viene como texto */}
               <span className="font-heading text-2xl font-black text-white">
                  ${Number(product.price).toFixed(2)}
               </span>
             </div>
               
             <div className="h-12 sm:h-14 min-w-[180px] w-1/2 overflow-hidden rounded-xl">
-              {/* Le pasamos el producto tal cual, el botón se encarga de la lógica del store */}
               <AddToCartButton product={product} large={true} /> 
             </div>
 
           </div>
-        </div>
+      </div>
 
       <CartSidebar />
       <FloatingCart /> 
