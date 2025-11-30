@@ -1,35 +1,45 @@
 // client/app/page.tsx
-
-// --- IMPORTS ---
 import React from "react";
 import FloatingCart from "@/components/FloatingCart";
 import CartSidebar from "@/components/CartSidebar";
 import Navbar from "@/components/Navbar";
-import HowItWorks from "@/components/HowItWorks";   // <--- 1. NUEVO
+import HowItWorks from "@/components/HowItWorks";   
 import Footer from "@/components/Footer";
-import Hero from "@/components/Hero"; // Nota: Tu componente Hero ya tiene el título y fondo, lo ajustaremos desde el padre.
+import Hero from "@/components/Hero"; 
 import ExchangeRateUpdater from "@/components/ExchangeRateUpdater";
 import PromoBanner from "@/components/PromoBanner";
-import Testimonials from "@/components/Testimonials"; // <--- 2. NUEVO
-import InstagramFeed from "@/components/InstagramFeed"; // <--- 3. NUEVO
+import Testimonials from "@/components/Testimonials"; 
+import InstagramFeed from "@/components/InstagramFeed"; 
 import Features from "@/components/Features";
-import MenuInterface from "@/components/MenuInterface"; // IMPORTA EL NUEVO
+import MenuInterface from "@/components/MenuInterface"; 
+import { API_URL } from "@/lib/config"; // <--- 1. IMPORTAR CONFIG
+
+// <--- 2. FORZAR ACTUALIZACIÓN SIEMPRE (Rompe el caché del servidor)
+export const dynamic = "force-dynamic"; 
 
 // --- DATA FETCHING ---
 async function getProducts() {
   try {
-    const res = await fetch("http://localhost:3000/products", { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
+    // <--- 3. USAR API_URL EN VEZ DE LOCALHOST
+    const res = await fetch(`${API_URL}/products`, { cache: "no-store" });
+    
+    if (!res.ok) {
+        console.error("Error status fetching products:", res.status);
+        return [];
+    }
+    return await res.json();
   } catch (error) {
+    console.error("Error fetching products:", error);
     return [];
   }
 }
 
 async function getExchangeRate() {
   try {
-    const res = await fetch("http://localhost:3000/config", { next: { revalidate: 3600 } });
-    if (!res.ok) return 45; // Fallback seguro
+    // <--- 3. USAR API_URL AQUÍ TAMBIÉN
+    const res = await fetch(`${API_URL}/config`, { cache: "no-store" });
+    
+    if (!res.ok) return 45; 
     const data = await res.json();
     return data?.tasa ?? 45;
   } catch (e) {
@@ -59,24 +69,21 @@ export default async function Home() {
           <HowItWorks />
         </div>
 
-        {/* 1. TODA LA LÓGICA DEL MENÚ + BUSCADOR + CATEGORÍAS */}
-        {/* Le pasamos los productos brutos y él los filtra dentro */}
+        {/* 1. TODA LA LÓGICA DEL MENÚ */}
         <div id="menu">
           <MenuInterface initialProducts={products} />
         </div>
+
         {/* 2. BANNER PROMOCIONAL */}
-        {/* Lo puse DEBAJO del buscador y grid intencionalmente para el flujo: */}
-        {/* Buscar -> Ver comida. Pero si quieres el banner ANTES del grid, muévelo DENTRO de MenuInterface.tsx */}
         <div className="max-w-6xl mx-auto mt-12 mb-12">
           <PromoBanner />
         </div>
 
-        {/* 3. TESTIMONIOS DE CLIENTES */}
+        {/* 3. TESTIMONIOS */}
         <div className="max-w-6xl mx-auto mt-12 mb-12">
           <Testimonials />
         </div>
           
-
         {/* 4. REDES SOCIALES */}
         <div className="max-w-6xl mx-auto mt-12 mb-12">
           <InstagramFeed />
@@ -89,7 +96,8 @@ export default async function Home() {
       <FloatingCart />
       <CartSidebar />
 
-      <div className="fixed bottom-2 right-2 z-50 ...">
+      {/* Widget de Tasa Flotante Discreto */}
+      <div className="fixed bottom-2 left-2 z-50 text-[10px] bg-black/80 text-white px-2 py-1 rounded pointer-events-none opacity-50">
         BCV: Bs. {tasaDelDia}
       </div>
     </div>
