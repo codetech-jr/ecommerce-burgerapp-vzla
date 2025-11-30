@@ -57,10 +57,8 @@ export default async function ProductPage({ params }: Props) {
   }
 
   // ⚠️ LÓGICA DE INGREDIENTES CORREGIDA:
-  // Convertimos el string "Carne, Queso" -> Array ["Carne", " Queso"]
-  const safeIngredients = product.ingredients 
-    ? product.ingredients.split(',') 
-    : [];
+  // Si product.ingredients ya es un array, lo usamos directamente.
+  const safeIngredients = product.ingredients || [];
 
   return (
     <div className="min-h-screen bg-slate-50 pb-32 md:pb-24">
