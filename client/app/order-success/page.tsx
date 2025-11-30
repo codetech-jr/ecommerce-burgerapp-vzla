@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import { CheckCircle2, ChefHat, Bike, Home, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { API_URL } from "@/lib/config";
 
 // Definimos los pasos visuales fuera para que no se recreen en cada render
 const STEPS = [
@@ -30,7 +31,7 @@ function OrderTrackingContent() {
         try {
             // Usamos ruta relativa por seguridad, asumiendo que el back está en el mismo Next.js
             // Si tienes un back separado, mantén tu URL completa.
-            const res = await fetch(`http://localhost:3000/orders/${orderId}`); 
+            const res = await fetch(`${API_URL}/orders/${orderId}`);
             if(res.ok) setOrder(await res.json());
         } catch (e) {
             console.error("Error al obtener estado de la orden:", e);

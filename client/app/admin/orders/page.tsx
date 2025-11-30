@@ -5,6 +5,7 @@ import { OrderInvoice } from "@/components/pdf/OrderInvoice"; // <--- Importar t
 import { toast } from 'sonner';
 import { Eye, CheckCircle, Clock, Truck, ArrowLeft, RefreshCw, Bell, X, Banknote, BarChart, Check, ChefHat, Bike } from "lucide-react";
 import Link from "next/link";
+import { API_URL } from "@/lib/config";
 
 // Definimos tipos básicos
 type Order = {
@@ -45,7 +46,7 @@ export default function OrdersPage() {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:3000/orders");
+            const res = await fetch(`${API_URL}/orders`);
             if (res.ok) {
                 const newOrders = await res.json();
                 setOrders(newOrders);
@@ -84,7 +85,7 @@ export default function OrdersPage() {
         fetchOrders();
         
         // Fetch de la Tasa (Si creaste el endpoint /config)
-        fetch("http://localhost:3000/config")
+        fetch(`${API_URL}/config`)
             .then(res => res.json())
             .then(data => {
                 if(data?.tasa) setTasa(data.tasa);
@@ -105,7 +106,7 @@ const updateStatus = async (id: number, newStatus: string) => {
         const toastId = toast.loading("Actualizando orden...");
 
         try {
-            const res = await fetch(`http://localhost:3000/orders/${id}`, {
+            const res = await fetch(`${API_URL}/orders/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus })

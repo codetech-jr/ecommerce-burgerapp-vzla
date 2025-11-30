@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { BarChart, Calendar, DollarSign, CreditCard, Trophy, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { API_URL } from "@/lib/config";
 
 // 1. IMPORTACIÓN DINÁMICA AFUERA DEL COMPONENTE (Vital)
 const DownloadReportBtn = dynamic(
@@ -23,7 +24,7 @@ export default function StatsPage() {
     const [topOrder, setTopOrder] = useState<any>(null);
 
     useEffect(() => {
-        fetch("http://localhost:3000/orders").then(res => res.json()).then(data => {
+        fetch(`${API_URL}/orders`).then(res => res.json()).then(data => {
             filterData(data, filter);
         });
     }, [filter]);

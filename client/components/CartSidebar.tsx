@@ -4,6 +4,7 @@ import Image from "next/image";
 import { toast } from 'sonner';
 import { X, Trash2, Send, ShoppingBag, Smartphone, CreditCard, Banknote, Bitcoin, User, MapPin, Phone, AlertCircle, Store, Bike, Clock, CalendarClock } from "lucide-react"; // Iconos nuevos
 import { useCartStore } from "@/store";
+import { API_URL } from "@/lib/config";
 
 const PAYMENT_METHODS = [
   { id: 'pago_movil', label: 'Pago Móvil', icon: <Smartphone size={16} />, requiresRef: true },
@@ -62,7 +63,7 @@ const handleCheckout = async () => {
         paymentRef: paymentRef || "N/A"
       };
 
-      const res = await fetch("http://localhost:3000/orders", {
+      const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
