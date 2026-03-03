@@ -7,11 +7,11 @@ const pwaConfig = withPWA({
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
-  disable: false, // Pon 'true' si te molesta el caché mientras programas en local
+  disable: process.env.NODE_ENV === 'development', // Apagado en dev por bug de infinite fetch
   workboxOptions: {
     disableDevLogs: true,
   },
-}); 
+});
 
 const nextConfig: NextConfig = {
   /* config options here */
