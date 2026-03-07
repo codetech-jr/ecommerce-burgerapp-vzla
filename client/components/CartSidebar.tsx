@@ -159,7 +159,7 @@ export default function CartSidebar() {
                   {/* Imagen */}
                   <div className="relative w-20 h-full shrink-0 bg-slate-50 rounded-xl overflow-hidden">
                     {item.image ? (
-                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                      <Image src={item.image.startsWith("photo-") ? `https://images.unsplash.com/${item.image}` : item.image} alt={item.name} fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-300">Sin foto</div>
                     )}

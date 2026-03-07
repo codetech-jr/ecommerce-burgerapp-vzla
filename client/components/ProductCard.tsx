@@ -54,7 +54,7 @@ export default function ProductCard({ product }: Props) {
         >
           {product.image ? (
             <Image
-              src={product.image}
+              src={product.image.startsWith("photo-") ? `https://images.unsplash.com/${product.image}` : product.image}
               alt={product.name || "Producto BurgerApp"}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
